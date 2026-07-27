@@ -1,0 +1,141 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ProductCard from '@/components/ProductCard.astro';
+import { categories, products } from '@/data/catalog';
+---
+<BaseLayout title="Каталог мебели и светотехники" description="Демонстрационный каталог мебели и светотехники в Махачкале.">
+  <div class="container">
+    <header class="page-hero">
+      <p class="eyebrow">Каталог · Preview</p>
+      <h1>Предметы для цельного интерьера</h1>
+      <p>Выберите категорию или найдите модель по названию. Стартовая подборка демонстрирует структуру будущего каталога.</p>
+    </header>
+  </div>
+  <section class="catalog-section container" aria-label="Каталог товаров">
+    <div class="catalog-toolbar">
+      <label class="search-field">
+        <span class="sr-only">Поиск по названию или артикулу</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m16 16 5 5"></path></svg>
+        <input type="search" placeholder="Название или артикул" data-search />
+      </label>
+      <button class="filter-toggle" type="button" aria-expanded="false" aria-controls="filter-panel">Фильтры <span data-filter-count>0</span></button>
+    </div>
+    <div id="filter-panel" class="filter-panel">
+      <div class="filter-group">
+        <p>Категория</p>
+        <div class="filter-options">
+          <button class="chip is-active" type="button" data-category="all">Все</button>
+          {categories.map((category) => <button class="chip" type="button" data-category={category.slug}>{category.shortName}</button>)}
+        </div>
+      </div>
+      <div class="filter-group">
+        <p>Статус</p>
+        <div class="filter-options">
+          <button class="chip is-active" type="button" data-status="all">Любой</button>
+          <button class="chip" type="button" data-status="in-stock">В наличии</button>
+          <button class="chip" type="button" data-status="made-to-order">Под заказ</button>
+        </div>
+      </div>
+      <button class="filter-close" type="button">Показать товары</button>
+    </div>
+    <div class="catalog-summary"><p><span data-count>{products.length}</span> позиций</p><button type="button" data-reset hidden>Сбросить фильтры</button></div>
+    <div class="product-grid" data-grid>
+      {products.map((product, index) => <ProductCard product={product} eager={index < 3} />)}
+    </div>
+    <div class="empty-state" data-empty>
+      <h2>Ничего не найдено</h2>
+      <p>Попробуйте изменить запрос или очистить фильтры.</p>
+      <button class="button" type="button" data-empty-reset>Сбросить фильтры</button>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const initCatalog = () => {
+    const root = document.querySelector('.catalog-section');
+    if (!(root instanceof HTMLElement)) return;
+    const cards = [...root.querySelectorAll('[data-product]')];
+    const search = root.querySelector('[data-search]');
+    const categoryButtons = [...root.querySelectorAll('[data-category]')];
+    const statusButtons = [...root.querySelectorAll('[data-status]')];
+    const count = root.querySelector('[data-count]');
+    const reset = root.querySelector('[data-reset]');
+    const empty = root.querySelector('[data-empty]');
+    const emptyReset = root.querySelector('[data-empty-reset]');
+    const panel = root.querySelector('.filter-panel');
+    const toggle = root.querySelector('.filter-toggle');
+    const close = root.querySelector('.filter-close');
+    if (!(search instanceof HTMLInputElement)) return;
+    let category = new URLSearchParams(location.search).get('category') || 'all';
+    let status = new URLSearchParams(location.search).get('status') || 'all';
+
+    const select = (buttons: Element[], key: string) => buttons.forEach((button) => button.classList.toggle('is-active', button.getAttribute(button.hasAttribute('data-category') ? 'data-category' : 'data-status') === key));
+    const update = () => {
+      const query = search.value.trim().toLocaleLowerCase('ru');
+      let visible = 0;
+      cards.forEach((card) => {
+        const element = card as HTMLElement;
+        const show = (!query || element.dataset.name?.includes(query)) && (category === 'all' || element.dataset.category === category) && (status === 'all' || element.dataset.status === status);
+        element.hidden = !show;
+        if (show) visible++;
+      });
+      if (count) count.textContent = String(visible);
+      empty?.classList.toggle('is-visible', visible === 0);
+      const active = Boolean(query || category !== 'all' || status !== 'all');
+      if (reset instanceof HTMLButtonElement) reset.hidden = !active;
+      const params = new URLSearchParams();
+      if (query) params.set('q', query);
+      if (category !== 'all') params.set('category', category);
+      if (status !== 'all') params.set('status', status);
+      history.replaceState({}, '', `${location.pathname}${params.size ? `?${params}` : ''}`);
+    };
+    const resetAll = () => { search.value = ''; category = 'all'; status = 'all'; select(categoryButtons, category); select(statusButtons, status); update(); };
+    const query = new URLSearchParams(location.search).get('q');
+    if (query) search.value = query;
+    select(categoryButtons, category); select(statusButtons, status); update();
+    search.addEventListener('input', update);
+    categoryButtons.forEach((button) => button.addEventListener('click', () => { category = button.getAttribute('data-category') || 'all'; select(categoryButtons, category); update(); }));
+    statusButtons.forEach((button) => button.addEventListener('click', () => { status = button.getAttribute('data-status') || 'all'; select(statusButtons, status); update(); }));
+    reset?.addEventListener('click', resetAll); emptyReset?.addEventListener('click', resetAll);
+    const closePanel = () => { panel?.classList.remove('is-open'); toggle?.setAttribute('aria-expanded', 'false'); document.body.classList.remove('filters-open'); };
+    toggle?.addEventListener('click', () => { const opening = !panel?.classList.contains('is-open'); panel?.classList.toggle('is-open', opening); toggle.setAttribute('aria-expanded', String(opening)); document.body.classList.toggle('filters-open', opening); });
+    close?.addEventListener('click', closePanel);
+    document.addEventListener('keydown', (event) => { if (event.key === 'Escape') closePanel(); });
+  };
+  document.addEventListener('astro:page-load', initCatalog); initCatalog();
+</script>
+
+<style>
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
+  .catalog-section { padding-bottom: 144px; }
+  .catalog-toolbar { display: grid; grid-template-columns: minmax(280px, 520px) auto; gap: 24px; justify-content: space-between; margin-bottom: 34px; }
+  .search-field { display: flex; min-height: 54px; align-items: center; gap: 12px; border-bottom: 1px solid var(--ink); }
+  .search-field svg { width: 20px; fill: none; stroke: currentColor; stroke-width: 1.6; }
+  .search-field input { width: 100%; border: 0; outline: 0; background: transparent; color: var(--ink); font-size: 1rem; }
+  .search-field input::placeholder { color: var(--muted); }
+  .filter-toggle { display: none; min-height: 48px; padding: 0 16px; border: 1px solid var(--ink); border-radius: 6px; background: transparent; }
+  .filter-toggle span { display: none; width: 22px; height: 22px; margin-left: 8px; place-items: center; border-radius: 50%; background: var(--ink); color: var(--paper); font-size: .7rem; }
+  .filter-panel { display: flex; gap: 50px; justify-content: space-between; padding: 24px 0 32px; border-block: 1px solid var(--taupe); }
+  .filter-group { display: flex; align-items: flex-start; gap: 22px; }
+  .filter-group > p { min-width: 74px; padding-top: 9px; color: var(--muted); font-size: .74rem; letter-spacing: .06em; text-transform: uppercase; }
+  .filter-options { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { min-height: 40px; padding: 8px 14px; border: 1px solid var(--taupe); border-radius: 100px; background: transparent; color: var(--ink); cursor: pointer; }
+  .chip.is-active { border-color: var(--walnut); background: var(--walnut); color: var(--paper); }
+  .filter-close { display: none; }
+  .catalog-summary { display: flex; justify-content: space-between; padding: 25px 0 30px; color: var(--muted); font-size: .82rem; }
+  .catalog-summary p { margin: 0; }
+  .catalog-summary button { border: 0; border-bottom: 1px solid currentColor; background: transparent; color: inherit; cursor: pointer; }
+  @media (max-width: 1050px) { .filter-panel { display: grid; gap: 18px; } }
+  @media (max-width: 720px) {
+    .catalog-section { padding-bottom: 96px; }
+    .catalog-toolbar { grid-template-columns: 1fr auto; gap: 12px; }
+    .filter-toggle { display: block; }
+    .filter-panel { position: fixed; z-index: 80; right: 0; bottom: 0; left: 0; display: grid; max-height: 80svh; padding: 28px 20px calc(20px + env(safe-area-inset-bottom)); border: 0; border-radius: 16px 16px 0 0; background: var(--paper); box-shadow: 0 -20px 60px color-mix(in oklch, var(--ink), transparent 74%); opacity: 0; pointer-events: none; transform: translateY(100%); transition: opacity .25s, transform .35s var(--ease-out); }
+    .filter-panel::before { width: 40px; height: 4px; margin: -14px auto 12px; border-radius: 5px; background: var(--taupe); content: ''; }
+    .filter-panel.is-open { opacity: 1; pointer-events: auto; transform: none; }
+    .filter-group { display: block; }
+    .filter-group > p { margin-bottom: 10px; }
+    .filter-close { display: block; min-height: 52px; margin-top: 10px; border: 0; border-radius: 6px; background: var(--walnut); color: var(--paper); }
+    body.filters-open::after { position: fixed; z-index: 70; inset: 0; background: color-mix(in oklch, var(--ink), transparent 35%); content: ''; }
+  }
+</style>

@@ -1,0 +1,21 @@
+---
+import type { Product } from '@/data/catalog';
+import { categoryBySlug, statusLabel } from '@/data/catalog';
+interface Props { product: Product; eager?: boolean }
+const { product, eager = false } = Astro.props;
+const category = categoryBySlug(product.category);
+---
+<article class="product-card" data-product data-name={`${product.name} ${product.sku}`.toLowerCase()} data-category={product.category} data-status={product.status}>
+  <a class="product-image" href={`/product/${product.slug}`} aria-label={`Открыть ${product.name}`}>
+    <img src={product.images[0]} alt={product.name} width="900" height="1125" loading={eager ? 'eager' : 'lazy'} />
+    <span class="product-arrow" aria-hidden="true">↗</span>
+  </a>
+  <div class="product-meta">
+    <div>
+      <p class="product-category">{category?.shortName}</p>
+      <h3><a href={`/product/${product.slug}`}>{product.name}</a></h3>
+    </div>
+    <span class:list={['status', product.status === 'in-stock' && 'status--stock']}>{statusLabel(product.status)}</span>
+  </div>
+  <p class="price">Цена по запросу</p>
+</article>

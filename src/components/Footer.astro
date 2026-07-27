@@ -1,0 +1,29 @@
+---
+import { contacts } from '@/utils/links';
+const year = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <div class="footer-main">
+    <div class="footer-brand">
+      <p>Мебель и свет для цельного интерьера. В наличии и под заказ в Махачкале.</p>
+    </div>
+    <div class="footer-column">
+      <p class="footer-label">Посмотреть</p>
+      <a href="/catalog">Каталог</a>
+      <a href="/#about">О салоне</a>
+      <a href="/contacts">Контакты</a>
+    </div>
+    <div class="footer-column">
+      <p class="footer-label">Связаться</p>
+      <a href={contacts.phoneLink}>{contacts.phoneDisplay}</a>
+      <a href={contacts.whatsapp} target="_blank" rel="noreferrer">WhatsApp ↗</a>
+      <a href={contacts.telegram} target="_blank" rel="noreferrer">Telegram ↗</a>
+      <a href={contacts.instagram} target="_blank" rel="noreferrer">Instagram ↗</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© {year}</p>
+    <p class="preview-note">Демонстрационная версия</p>
+    <a href="/privacy">Политика конфиденциальности</a>
+  </div>
+</footer>

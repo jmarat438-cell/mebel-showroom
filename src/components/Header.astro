@@ -1,0 +1,69 @@
+---
+import { contacts } from '@/utils/links';
+interface Props { overlay?: boolean }
+const { overlay = false } = Astro.props;
+---
+<header class:list={['site-header', overlay && 'site-header--overlay']} data-header>
+  <span class="header-balance" aria-hidden="true"></span>
+  <nav class="desktop-nav" aria-label="Основная навигация">
+    <a href="/">Главная</a>
+    <a href="/catalog">Каталог</a>
+    <a href="/#about">О салоне</a>
+    <a href="/#delivery">Доставка</a>
+    <a href="/contacts">Контакты</a>
+  </nav>
+  <div class="header-actions">
+    <a class="header-wa" href={contacts.whatsapp} target="_blank" rel="noreferrer">WhatsApp</a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Открыть меню">
+      <span></span><span></span>
+    </button>
+  </div>
+  <div id="mobile-menu" class="mobile-menu" hidden>
+    <nav aria-label="Мобильная навигация">
+      <a href="/">Главная</a>
+      <a href="/catalog">Каталог</a>
+      <a href="/#about">О салоне</a>
+      <a href="/#delivery">Доставка</a>
+      <a href="/contacts">Контакты</a>
+    </nav>
+    <div class="mobile-contacts">
+      <a href={contacts.phoneLink}>{contacts.phoneDisplay}</a>
+      <a href={contacts.whatsapp} target="_blank" rel="noreferrer">Написать в WhatsApp ↗</a>
+    </div>
+  </div>
+</header>
+
+<script>
+  const initHeader = () => {
+    const header = document.querySelector('[data-header]');
+    const button = header?.querySelector('.menu-toggle');
+    const menu = header?.querySelector('.mobile-menu');
+    if (!(header instanceof HTMLElement) || !(button instanceof HTMLButtonElement) || !(menu instanceof HTMLElement)) return;
+
+    const setScrolled = () => header.classList.toggle('is-scrolled', window.scrollY > 24);
+    setScrolled();
+    window.addEventListener('scroll', setScrolled, { passive: true });
+
+    const close = () => {
+      button.setAttribute('aria-expanded', 'false');
+      button.setAttribute('aria-label', 'Открыть меню');
+      menu.hidden = true;
+      document.body.classList.remove('menu-open');
+      button.focus();
+    };
+    const open = () => {
+      button.setAttribute('aria-expanded', 'true');
+      button.setAttribute('aria-label', 'Закрыть меню');
+      menu.hidden = false;
+      document.body.classList.add('menu-open');
+      menu.querySelector('a')?.focus();
+    };
+    button.addEventListener('click', () => button.getAttribute('aria-expanded') === 'true' ? close() : open());
+    menu.querySelectorAll('a').forEach((link) => link.addEventListener('click', close));
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && button.getAttribute('aria-expanded') === 'true') close();
+    });
+  };
+  document.addEventListener('astro:page-load', initHeader);
+  initHeader();
+</script>

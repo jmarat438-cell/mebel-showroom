@@ -1,0 +1,114 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ProductCard from '@/components/ProductCard.astro';
+import { products, categoryBySlug, productsInCategory, statusLabel } from '@/data/catalog';
+import { contacts, whatsappProductUrl } from '@/utils/links';
+
+export function getStaticPaths() {
+  return products.map((product) => ({ params: { slug: product.slug }, props: { product } }));
+}
+const { product } = Astro.props;
+const category = categoryBySlug(product.category)!;
+const related = productsInCategory(product.category).filter((item) => item.slug !== product.slug).slice(0, 3);
+const whatsapp = whatsappProductUrl(product.name, product.sku, new URL(Astro.url.pathname, Astro.site));
+---
+<BaseLayout title={`${product.name} | Каталог мебели`} description={`${product.description} Цена и наличие по запросу.`} image={product.images[0]}>
+  <div class="container product-page">
+    <nav class="breadcrumbs" aria-label="Хлебные крошки"><a href="/">Главная</a><span>/</span><a href="/catalog">Каталог</a><span>/</span><a href={`/catalog/${category.slug}`}>{category.shortName}</a><span>/</span><span aria-current="page">{product.name}</span></nav>
+    <div class="product-layout">
+      <div class="gallery" data-gallery>
+        <button class="gallery-main" type="button" aria-label="Открыть фотографию крупнее" data-open-lightbox>
+          <img src={product.images[0]} alt={product.name} width="1100" height="1375" data-main-image />
+          <span class="gallery-count"><b data-current>1</b> / {product.images.length}</span>
+        </button>
+        {product.images.length > 1 && <div class="thumbnails" aria-label="Фотографии товара">{product.images.map((image, index) => <button class:list={['thumbnail', index === 0 && 'is-active']} type="button" data-image={image} data-index={index} aria-label={`Показать фотографию ${index + 1}`}><img src={image} alt="" width="180" height="225" loading="lazy" /></button>)}</div>}
+      </div>
+      <article class="product-info">
+        <p class="eyebrow">{category.shortName} · {product.sku}</p>
+        <h1>{product.name}</h1>
+        <div class="product-state"><span class:list={['status', product.status === 'in-stock' && 'status--stock']}>{statusLabel(product.status)}</span><span>Цена по запросу</span></div>
+        <p class="product-description">{product.description}</p>
+        <div class="preview-disclaimer"><strong>Демонстрационная карточка.</strong> Размеры, материалы, отделки и варианты будут добавлены после передачи данных владельцем.</div>
+        <div class="product-actions">
+          <a class="button" href={whatsapp} target="_blank" rel="noreferrer">Узнать цену в WhatsApp</a>
+          <a class="button button--outline" href={contacts.phoneLink}>Позвонить</a>
+        </div>
+        <a class="showroom-link" href="/contacts"><span>Посмотреть в шоуруме</span>{contacts.address} ↗</a>
+      </article>
+    </div>
+    {related.length > 0 && <section class="related"><header><p class="eyebrow">В той же категории</p><h2>Можно сопоставить</h2></header><div class="product-grid">{related.map((item) => <ProductCard product={item} />)}</div></section>}
+  </div>
+  <div class="mobile-product-cta"><a class="button" href={whatsapp} target="_blank" rel="noreferrer">Узнать цену</a></div>
+  <dialog class="lightbox" data-lightbox>
+    <button class="lightbox-close" type="button" aria-label="Закрыть фотографию" data-close-lightbox>×</button>
+    <img src={product.images[0]} alt={product.name} width="1600" height="1800" data-lightbox-image />
+  </dialog>
+</BaseLayout>
+
+<script>
+  const initGallery = () => {
+    const gallery = document.querySelector('[data-gallery]');
+    if (!(gallery instanceof HTMLElement)) return;
+    const main = gallery.querySelector('[data-main-image]');
+    const current = gallery.querySelector('[data-current]');
+    const thumbs = [...gallery.querySelectorAll('[data-image]')];
+    const dialog = document.querySelector('[data-lightbox]');
+    const dialogImage = dialog?.querySelector('[data-lightbox-image]');
+    const open = gallery.querySelector('[data-open-lightbox]');
+    const close = dialog?.querySelector('[data-close-lightbox]');
+    thumbs.forEach((thumb) => thumb.addEventListener('click', () => {
+      const src = thumb.getAttribute('data-image'); if (!src) return;
+      if (main instanceof HTMLImageElement) main.src = src;
+      if (current) current.textContent = String(Number(thumb.getAttribute('data-index')) + 1);
+      thumbs.forEach((item) => item.classList.toggle('is-active', item === thumb));
+    }));
+    open?.addEventListener('click', () => {
+      if (dialog instanceof HTMLDialogElement && main instanceof HTMLImageElement) {
+        if (dialogImage instanceof HTMLImageElement) dialogImage.src = main.src;
+        dialog.showModal();
+      }
+    });
+    close?.addEventListener('click', () => { if (dialog instanceof HTMLDialogElement) dialog.close(); });
+    dialog?.addEventListener('click', (event) => { if (event.target === dialog && dialog instanceof HTMLDialogElement) dialog.close(); });
+  };
+  document.addEventListener('astro:page-load', initGallery); initGallery();
+</script>
+
+<style>
+  .product-page { padding-top: 46px; }
+  .product-layout { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(340px, .68fr); gap: clamp(48px, 7vw, 120px); align-items: start; }
+  .gallery-main { position: relative; width: 100%; padding: 0; overflow: hidden; aspect-ratio: 4 / 5; border: 0; background: var(--taupe); cursor: zoom-in; }
+  .gallery-main img { width: 100%; height: 100%; object-fit: cover; }
+  .gallery-count { position: absolute; right: 14px; bottom: 14px; padding: 7px 11px; border-radius: 100px; background: color-mix(in oklch, var(--paper), transparent 6%); font-size: .72rem; }
+  .gallery-count b { font-weight: 600; }
+  .thumbnails { display: flex; gap: 10px; margin-top: 12px; overflow-x: auto; }
+  .thumbnail { width: 82px; flex: 0 0 82px; padding: 0; aspect-ratio: 4 / 5; border: 1px solid transparent; background: transparent; opacity: .55; cursor: pointer; }
+  .thumbnail img { width: 100%; height: 100%; object-fit: cover; }
+  .thumbnail.is-active { border-color: var(--ink); opacity: 1; }
+  .product-info { position: sticky; top: 120px; padding-top: clamp(14px, 4vw, 72px); }
+  .product-info h1 { margin-bottom: 30px; font-size: clamp(2.6rem, 4.7vw, 5.1rem); }
+  .product-state { display: flex; justify-content: space-between; gap: 20px; padding-block: 18px; border-block: 1px solid var(--taupe); font-size: .86rem; }
+  .product-description { max-width: 46ch; margin: 36px 0 24px; font-size: 1.08rem; }
+  .preview-disclaimer { max-width: 52ch; padding: 18px; border: 1px solid var(--taupe); border-radius: 8px; color: var(--muted); font-size: .82rem; }
+  .preview-disclaimer strong { display: block; color: var(--ink); }
+  .product-actions { display: grid; gap: 10px; margin-top: 32px; }
+  .showroom-link { display: grid; gap: 3px; margin-top: 28px; color: var(--muted); font-size: .8rem; }
+  .showroom-link span { color: var(--ink); font-size: .9rem; font-weight: 600; }
+  .related { padding-block: clamp(100px, 12vw, 180px); }
+  .related header { margin-bottom: 50px; }
+  .related h2 { margin: 0; }
+  .lightbox { width: min(92vw, 1200px); max-width: none; height: 92vh; max-height: none; padding: 50px; border: 0; background: var(--ink); color: var(--paper); }
+  .lightbox::backdrop { background: color-mix(in oklch, var(--ink), transparent 10%); }
+  .lightbox img { width: 100%; height: 100%; object-fit: contain; }
+  .lightbox-close { position: absolute; z-index: 1; top: 10px; right: 15px; width: 44px; height: 44px; border: 0; background: transparent; color: var(--paper); font-size: 2rem; cursor: pointer; }
+  .mobile-product-cta { display: none; }
+  @media (max-width: 850px) {
+    .product-layout { grid-template-columns: 1fr; }
+    .product-info { position: static; padding-top: 0; }
+    .product-page { padding-top: 24px; }
+    .mobile-product-cta { position: fixed; z-index: 40; right: 0; bottom: 0; left: 0; display: block; padding: 10px 20px calc(10px + env(safe-area-inset-bottom)); background: var(--paper); box-shadow: 0 -12px 30px color-mix(in oklch, var(--ink), transparent 82%); }
+    .mobile-product-cta .button { width: 100%; }
+    .site-footer { padding-bottom: 100px; }
+  }
+  @media (max-width: 520px) { .lightbox { width: 100vw; height: 100svh; padding: 52px 14px 14px; } }
+</style>

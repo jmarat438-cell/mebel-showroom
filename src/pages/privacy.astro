@@ -1,0 +1,28 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+<BaseLayout title="Политика конфиденциальности" description="Информация об обработке данных на сайте салона мебели и светотехники.">
+  <article class="legal container">
+    <header class="page-hero">
+      <p class="eyebrow">Документы · Черновик</p>
+      <h1>Политика конфиденциальности</h1>
+      <p>Демонстрационная страница. Перед публикацией документ необходимо дополнить реквизитами оператора и проверить с юристом.</p>
+    </header>
+    <div class="legal-body">
+      <section><h2>1. Общие положения</h2><p>Эта страница описывает принципы работы демонстрационной версии сайта салона мебели и светотехники. Сайт не содержит форм регистрации, заказа или обратного звонка и не запрашивает у посетителя имя, телефон либо адрес.</p></section>
+      <section><h2>2. Переходы на внешние сервисы</h2><p>При нажатии на ссылки WhatsApp, Telegram, Instagram и 2ГИС посетитель переходит на сайты соответствующих сервисов. Дальнейшая обработка данных регулируется их собственными документами.</p></section>
+      <section><h2>3. Аналитика и файлы cookie</h2><p>В демонстрационной версии аналитика и маркетинговые системы не подключены. При их добавлении политика и механика согласия должны быть обновлены до публикации.</p></section>
+      <section><h2>4. Контакты</h2><p>Вопросы по работе сайта можно направить на <a href="mailto:vavilon.zakup@yandex.ru">vavilon.zakup@yandex.ru</a>.</p></section>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .legal { padding-bottom: 140px; }
+  .legal .page-hero { max-width: 1000px; }
+  .legal-body { max-width: 780px; margin-left: auto; }
+  .legal-body section { padding: 34px 0; border-top: 1px solid var(--taupe); }
+  .legal-body h2 { font-family: 'Manrope', sans-serif; font-size: 1.25rem; font-weight: 600; letter-spacing: 0; }
+  .legal-body p { max-width: 70ch; color: var(--muted); }
+  .legal-body a { color: var(--ink); text-decoration: underline; }
+</style>

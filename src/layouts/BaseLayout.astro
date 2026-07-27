@@ -1,0 +1,64 @@
+---
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+import '@/styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  darkHeader?: boolean;
+}
+
+const {
+  title,
+  description,
+  image = 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1600&q=84',
+  darkHeader = false,
+} = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#211a17" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={image} />
+    <title>{title}</title>
+  </head>
+  <body class:list={[darkHeader && 'has-overlay-header']}>
+    <a class="skip-link" href="#content">Перейти к содержанию</a>
+    <Header overlay={darkHeader} />
+    <main id="content"><slot /></main>
+    <Footer />
+    <script>
+      const reveal = () => {
+        const nodes = document.querySelectorAll('[data-reveal]');
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          nodes.forEach((node) => node.classList.add('is-visible'));
+          return;
+        }
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.12 });
+        nodes.forEach((node) => observer.observe(node));
+      };
+      document.addEventListener('astro:page-load', reveal);
+      reveal();
+    </script>
+  </body>
+</html>

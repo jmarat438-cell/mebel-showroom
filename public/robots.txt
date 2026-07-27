@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://vavilon-mebel.ru/sitemap-index.xml
