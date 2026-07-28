@@ -12,7 +12,7 @@ const category = categoryBySlug(product.category)!;
 const related = productsInCategory(product.category).filter((item) => item.slug !== product.slug).slice(0, 3);
 const whatsapp = whatsappProductUrl(product.name, product.sku, new URL(Astro.url.pathname, Astro.site));
 ---
-<BaseLayout title={`${product.name} | Каталог мебели`} description={`${product.description} Цена и наличие по запросу.`} image={product.images[0]}>
+<BaseLayout title={`${product.name} | Well Art`} description={`${product.description} Цена и наличие по запросу в Well Art.`} image={product.images[0]}>
   <div class="container product-page">
     <nav class="breadcrumbs" aria-label="Хлебные крошки"><a href="/">Главная</a><span>/</span><a href="/catalog">Каталог</a><span>/</span><a href={`/catalog/${category.slug}`}>{category.shortName}</a><span>/</span><span aria-current="page">{product.name}</span></nav>
     <div class="product-layout">

@@ -5,7 +5,8 @@ const year = new Date().getFullYear();
 <footer class="site-footer">
   <div class="footer-main">
     <div class="footer-brand">
-      <p>Мебель и свет для цельного интерьера. В наличии и под заказ в Махачкале.</p>
+      <a class="footer-wordmark" href="/">{contacts.name}</a>
+      <p>{contacts.tagline}</p>
     </div>
     <div class="footer-column">
       <p class="footer-label">Посмотреть</p>
@@ -22,7 +23,7 @@ const year = new Date().getFullYear();
     </div>
   </div>
   <div class="footer-bottom">
-    <p>© {year}</p>
+    <p>© {year} {contacts.name}</p>
     <p class="preview-note">Демонстрационная версия</p>
     <a href="/privacy">Политика конфиденциальности</a>
   </div>

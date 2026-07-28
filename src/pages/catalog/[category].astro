@@ -10,7 +10,7 @@ export function getStaticPaths() {
 const { category } = Astro.props;
 const items = productsInCategory(category.slug);
 ---
-<BaseLayout title={`${category.name} | Мебель и свет`} description={`${category.description} Салон мебели и светотехники в Махачкале.`} image={category.image}>
+<BaseLayout title={`${category.name} | Well Art`} description={`${category.description} Мебельный салон Well Art в Махачкале.`} image={category.image}>
   <div class="container">
     <header class="page-hero">
       <nav class="breadcrumbs" aria-label="Хлебные крошки"><a href="/">Главная</a><span>/</span><a href="/catalog">Каталог</a><span>/</span><span aria-current="page">{category.shortName}</span></nav>

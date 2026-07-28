@@ -1,14 +1,18 @@
-const phone = '79884491000';
+const phone = '79201221212';
 
 export const contacts = {
-  phoneDisplay: '+7 988 449-10-00',
+  name: 'Well Art',
+  tagline: 'Мебель, которая подчёркивает не стиль, а личность.',
+  phoneDisplay: '+7 920 122-12-12',
   phoneLink: `tel:+${phone}`,
   whatsapp: `https://wa.me/${phone}`,
-  telegram: 'https://t.me/invavilon_mebel',
-  instagram: 'https://www.instagram.com/vavilon_mebel/',
-  route: 'https://2gis.ru/makhachkala/firm/70000001021681508',
-  email: 'mailto:vavilon.zakup@yandex.ru',
-  address: 'Махачкала, проспект Амет-Хана Султана, 5а/1',
+  telegram: 'https://t.me/+79201221212',
+  instagram: 'https://www.instagram.com/wellart.ru/',
+  taplink: 'https://taplink.cc/wellart',
+  route: 'https://2gis.ru/makhachkala/firm/70000001061375141',
+  address: 'Махачкала, улица Гагарина, 32/1 стр.',
+  floor: '1–5 этажи',
+  hours: 'Ежедневно, 10:00–19:00',
 };
 
 export const whatsappProductUrl = (name: string, sku: string, url: URL) => {

@@ -4,9 +4,11 @@ interface Props { overlay?: boolean }
 const { overlay = false } = Astro.props;
 ---
 <header class:list={['site-header', overlay && 'site-header--overlay']} data-header>
-  <span class="header-balance" aria-hidden="true"></span>
+  <a class="brand" href="/" aria-label="Well Art, на главную">
+    <span class="brand__name">Well Art</span>
+    <span class="brand__descriptor">мебельный салон</span>
+  </a>
   <nav class="desktop-nav" aria-label="Основная навигация">
-    <a href="/">Главная</a>
     <a href="/catalog">Каталог</a>
     <a href="/#about">О салоне</a>
     <a href="/#delivery">Доставка</a>
@@ -20,7 +22,6 @@ const { overlay = false } = Astro.props;
   </div>
   <div id="mobile-menu" class="mobile-menu" hidden>
     <nav aria-label="Мобильная навигация">
-      <a href="/">Главная</a>
       <a href="/catalog">Каталог</a>
       <a href="/#about">О салоне</a>
       <a href="/#delivery">Доставка</a>
