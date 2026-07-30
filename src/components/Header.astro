@@ -20,7 +20,7 @@ const { overlay = false } = Astro.props;
       <span></span><span></span>
     </button>
   </div>
-  <div id="mobile-menu" class="mobile-menu" hidden>
+  <div id="mobile-menu" class="mobile-menu" aria-hidden="true" hidden>
     <nav aria-label="Мобильная навигация">
       <a href="/catalog">Каталог</a>
       <a href="/#about">О салоне</a>
@@ -40,29 +40,84 @@ const { overlay = false } = Astro.props;
     const button = header?.querySelector('.menu-toggle');
     const menu = header?.querySelector('.mobile-menu');
     if (!(header instanceof HTMLElement) || !(button instanceof HTMLButtonElement) || !(menu instanceof HTMLElement)) return;
+    if (header.dataset.menuReady === 'true') return;
+    header.dataset.menuReady = 'true';
+
+    let previousFocus: Element | null = null;
+    let lockedScrollY = 0;
+    const focusableSelector = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
+    const isOpen = () => button.getAttribute('aria-expanded') === 'true';
 
     const setScrolled = () => header.classList.toggle('is-scrolled', window.scrollY > 24);
     setScrolled();
     window.addEventListener('scroll', setScrolled, { passive: true });
 
-    const close = () => {
+    const unlockPage = () => {
+      document.body.classList.remove('menu-open');
+      document.body.style.top = '';
+      window.scrollTo(0, lockedScrollY);
+    };
+
+    const close = (restoreFocus = true) => {
       button.setAttribute('aria-expanded', 'false');
       button.setAttribute('aria-label', 'Открыть меню');
+      menu.setAttribute('aria-hidden', 'true');
       menu.hidden = true;
-      document.body.classList.remove('menu-open');
-      button.focus();
+      header.classList.remove('is-menu-open');
+      unlockPage();
+      if (restoreFocus) {
+        const target = previousFocus instanceof HTMLElement ? previousFocus : button;
+        target.focus();
+      }
     };
+
     const open = () => {
+      previousFocus = document.activeElement;
+      lockedScrollY = window.scrollY;
       button.setAttribute('aria-expanded', 'true');
       button.setAttribute('aria-label', 'Закрыть меню');
+      menu.setAttribute('aria-hidden', 'false');
       menu.hidden = false;
+      header.classList.add('is-menu-open');
+      document.body.style.top = `-${lockedScrollY}px`;
       document.body.classList.add('menu-open');
       menu.querySelector('a')?.focus();
     };
-    button.addEventListener('click', () => button.getAttribute('aria-expanded') === 'true' ? close() : open());
-    menu.querySelectorAll('a').forEach((link) => link.addEventListener('click', close));
+
+    button.addEventListener('click', () => isOpen() ? close() : open());
+    menu.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => close(false)));
+    header.querySelector('.brand')?.addEventListener('click', () => {
+      if (isOpen()) close(false);
+    });
+
     document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape' && button.getAttribute('aria-expanded') === 'true') close();
+      if (!isOpen()) return;
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        close();
+        return;
+      }
+      if (event.key !== 'Tab') return;
+
+      const focusable = [...header.querySelectorAll(focusableSelector)].filter((item) => (
+        item instanceof HTMLElement && item.offsetParent !== null
+      ));
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (!(first instanceof HTMLElement) || !(last instanceof HTMLElement)) return;
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    });
+
+    const desktop = window.matchMedia('(min-width: 981px)');
+    desktop.addEventListener('change', (event) => {
+      if (event.matches && isOpen()) close(false);
     });
   };
   document.addEventListener('astro:page-load', initHeader);
