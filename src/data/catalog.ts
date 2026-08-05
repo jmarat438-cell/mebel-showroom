@@ -109,7 +109,7 @@ export const products: Product[] = [
     slug: 'tumba-mira', name: 'Прикроватная тумба «Мира»', sku: 'WA-302', category: 'bedroom',
     status: 'in-stock',
     description: 'Компактный предмет с чистой линией фасада.',
-    images: [img('photo-1616486338812-3dadae4b4ace'), img('photo-1600566753086-00f18fb6b3ea6')],
+    images: [img('photo-1616486338812-3dadae4b4ace'), img('photo-1616594039964-ae9021a400a0')],
   },
   {
     slug: 'gostinaya-aura', name: 'Композиция «Аура»', sku: 'WA-401', category: 'living-room',
@@ -121,7 +121,7 @@ export const products: Product[] = [
     slug: 'stolik-velo', name: 'Журнальный столик «Вело»', sku: 'WA-402', category: 'living-room',
     status: 'in-stock',
     description: 'Невысокий столик для мягкой группы и предметов декора.',
-    images: [img('photo-1532372320572-cda25653a694'), img('photo-1618220179428-22790b461013')],
+    images: [img('photo-1583847268964-b28dc8f51f92'), img('photo-1618220179428-22790b461013')],
   },
   {
     slug: 'komod-arden', name: 'Комод «Арден»', sku: 'WA-501', category: 'storage',
