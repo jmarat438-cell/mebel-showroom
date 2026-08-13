@@ -5,8 +5,14 @@ const { overlay = false } = Astro.props;
 ---
 <header class:list={['site-header', overlay && 'site-header--overlay']} data-header>
   <a class="brand" href="/" aria-label="Well Art, на главную">
-    <span class="brand__name">Well Art</span>
-    <span class="brand__descriptor">мебельный салон</span>
+    <img
+      class="brand__logo"
+      src="/brand/wellart-logo.png"
+      alt=""
+      width="491"
+      height="524"
+      decoding="async"
+    />
   </a>
   <nav class="desktop-nav" aria-label="Основная навигация">
     <a href="/catalog">Каталог</a>
