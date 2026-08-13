@@ -11,8 +11,8 @@ export const contacts = {
   taplink: 'https://taplink.cc/wellart',
   route: 'https://2gis.ru/makhachkala/firm/70000001061375141',
   address: 'Махачкала, улица Гагарина, 32/1 стр.',
-  floor: '1–5 этажи',
-  hours: 'Ежедневно, 10:00–19:00',
+  floor: '1-5 этажи',
+  hours: 'Ежедневно, 10:00-19:00',
 };
 
 export const whatsappProductUrl = (name: string, sku: string, url: URL) => {

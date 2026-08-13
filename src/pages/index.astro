@@ -13,7 +13,7 @@ const featured = products.filter((item) => item.featured).slice(0, 6);
     <img class="home-hero__image" src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=2200&q=88" alt="Гостиная с мягкой мебелью, деревянными деталями и тёплым светом" width="2200" height="1467" />
     <div class="home-hero__shade"></div>
     <div class="home-hero__content">
-      <p class="hero-kicker">Well Art · Махачкала</p>
+      <p class="hero-kicker">Well Art. Мебель, интерьеры и кофе</p>
       <h1 id="hero-title">Интерьер<br />с характером</h1>
       <p>{contacts.tagline} Модели в наличии и под заказ.</p>
       <div class="button-row">
@@ -21,7 +21,6 @@ const featured = products.filter((item) => item.featured).slice(0, 6);
         <a class="hero-link" href={contacts.whatsapp} target="_blank" rel="noreferrer">Написать в WhatsApp ↗</a>
       </div>
     </div>
-    <a class="hero-scroll" href="#categories" aria-label="Перейти к категориям"><span></span>Листайте</a>
   </section>
 
   <section id="categories" class="section categories-section container">
@@ -80,17 +79,15 @@ const featured = products.filter((item) => item.featured).slice(0, 6);
 </BaseLayout>
 
 <style>
-  .home-hero { position: relative; min-height: 100svh; overflow: hidden; color: var(--paper); background: var(--ink); }
+  .home-hero { position: relative; min-height: 100dvh; overflow: hidden; color: var(--paper); background: var(--ink); }
   .home-hero__image, .home-hero__shade { position: absolute; inset: 0; width: 100%; height: 100%; }
   .home-hero__image { object-fit: cover; object-position: 50% 52%; animation: hero-in 1.4s var(--ease-out) both; }
   .home-hero__shade { background: linear-gradient(90deg, color-mix(in oklch, var(--ink), transparent 12%) 0%, color-mix(in oklch, var(--ink), transparent 55%) 54%, transparent 84%), linear-gradient(0deg, color-mix(in oklch, var(--ink), transparent 35%), transparent 50%); }
-  .home-hero__content { position: relative; z-index: 1; display: flex; width: var(--page); min-height: 100svh; margin-inline: auto; padding: clamp(140px, 17vh, 210px) 0 76px; flex-direction: column; align-items: flex-start; justify-content: center; animation: content-in 1s .18s var(--ease-out) both; }
-  .hero-kicker { margin-bottom: 28px; font-size: .76rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; }
+  .home-hero__content { position: relative; z-index: 1; display: flex; width: var(--page); min-height: 100dvh; margin-inline: auto; padding: clamp(128px, 15vh, 190px) 0 68px; flex-direction: column; align-items: flex-start; justify-content: center; animation: content-in 1s .18s var(--ease-out) both; }
+  .hero-kicker { margin-bottom: 28px; color: var(--brand-red); font-size: .76rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; }
   .home-hero h1 { max-width: 850px; margin-bottom: 28px; }
   .home-hero__content > p:not(.hero-kicker) { max-width: 46ch; margin-bottom: 38px; color: color-mix(in oklch, var(--paper), transparent 14%); font-size: clamp(1rem, 1.3vw, 1.16rem); }
   .hero-link { display: inline-flex; min-height: 52px; align-items: center; border-bottom: 1px solid currentColor; font-weight: 600; }
-  .hero-scroll { position: absolute; z-index: 2; right: max(24px, calc((100vw - 1360px) / 2)); bottom: 34px; display: flex; align-items: center; gap: 10px; font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; }
-  .hero-scroll span { display: block; width: 44px; height: 1px; background: currentColor; }
   @keyframes hero-in { from { transform: scale(1.035); filter: brightness(.8); } to { transform: scale(1); filter: brightness(1); } }
   @keyframes content-in { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
   .category-mosaic { display: grid; grid-template-columns: repeat(12, 1fr); gap: 24px; align-items: start; }
@@ -125,7 +122,6 @@ const featured = products.filter((item) => item.featured).slice(0, 6);
   @media (max-width: 800px) {
     .home-hero__shade { background: linear-gradient(0deg, color-mix(in oklch, var(--ink), transparent 7%) 0%, transparent 80%); }
     .home-hero__content { justify-content: flex-end; padding-bottom: 92px; }
-    .hero-scroll { display: none; }
     .category-mosaic { gap: 12px; }
     .category-tile--1, .category-tile--2, .category-tile--3, .category-tile--4, .category-tile--5, .category-tile--6 { grid-column: span 6; margin-top: 0; aspect-ratio: .78 / 1; }
     .category-tile h3 { right: 12px; bottom: 13px; left: 12px; padding: 0; font-size: 1.15rem; }
