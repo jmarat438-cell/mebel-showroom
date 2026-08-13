@@ -6,7 +6,7 @@ export const contacts = {
   phoneDisplay: '+7 920 122-12-12',
   phoneLink: `tel:+${phone}`,
   whatsapp: `https://wa.me/${phone}`,
-  telegram: 'https://t.me/+79201221212',
+  telegram: 'https://t.me/wellart_m',
   instagram: 'https://www.instagram.com/wellart.ru/',
   taplink: 'https://taplink.cc/wellart',
   route: 'https://2gis.ru/makhachkala/firm/70000001061375141',

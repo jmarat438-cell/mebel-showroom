@@ -1,6 +1,6 @@
 ---
 import type { Product } from '@/data/catalog';
-import { categoryBySlug, statusLabel } from '@/data/catalog';
+import { categoryBySlug, formatPrice, statusLabel } from '@/data/catalog';
 interface Props { product: Product; eager?: boolean }
 const { product, eager = false } = Astro.props;
 const category = categoryBySlug(product.category);
@@ -17,5 +17,5 @@ const category = categoryBySlug(product.category);
     </div>
     <span class:list={['status', product.status === 'in-stock' && 'status--stock']}>{statusLabel(product.status)}</span>
   </div>
-  <p class="price">Цена по запросу</p>
+  <p class:list={['price', product.price && 'price--known']}>{formatPrice(product.price)}</p>
 </article>

@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import ProductCard from '@/components/ProductCard.astro';
-import { products, categoryBySlug, productsInCategory, statusLabel } from '@/data/catalog';
+import { products, categoryBySlug, formatPrice, productsInCategory, statusLabel } from '@/data/catalog';
 import { contacts, whatsappProductUrl } from '@/utils/links';
 
 export function getStaticPaths() {
@@ -12,7 +12,7 @@ const category = categoryBySlug(product.category)!;
 const related = productsInCategory(product.category).filter((item) => item.slug !== product.slug).slice(0, 3);
 const whatsapp = whatsappProductUrl(product.name, product.sku, new URL(Astro.url.pathname, Astro.site));
 ---
-<BaseLayout title={`${product.name} | Well Art`} description={`${product.description} Цена и наличие по запросу в Well Art.`} image={product.images[0]}>
+<BaseLayout title={`${product.name} | Well Art`} description={`${product.description} ${formatPrice(product.price)}.`} image={product.images[0]}>
   <div class="container product-page">
     <nav class="breadcrumbs" aria-label="Хлебные крошки"><a href="/">Главная</a><span>/</span><a href="/catalog">Каталог</a><span>/</span><a href={`/catalog/${category.slug}`}>{category.shortName}</a><span>/</span><span aria-current="page">{product.name}</span></nav>
     <div class="product-layout">
@@ -26,11 +26,16 @@ const whatsapp = whatsappProductUrl(product.name, product.sku, new URL(Astro.url
       <article class="product-info">
         <p class="eyebrow">{category.shortName} · {product.sku}</p>
         <h1>{product.name}</h1>
-        <div class="product-state"><span class:list={['status', product.status === 'in-stock' && 'status--stock']}>{statusLabel(product.status)}</span><span>Цена по запросу</span></div>
+        <div class="product-state"><span class:list={['status', product.status === 'in-stock' && 'status--stock']}>{statusLabel(product.status)}</span><span>{formatPrice(product.price)}</span></div>
         <p class="product-description">{product.description}</p>
-        <div class="preview-disclaimer"><strong>Демонстрационная карточка.</strong> Размеры, материалы, отделки и варианты будут добавлены после передачи данных владельцем.</div>
+        {product.dimensions && <p class="product-dimensions"><span>Размер</span>{product.dimensions}</p>}
+        {product.sourceUrl ? (
+          <div class="preview-disclaimer"><strong>Данные из Telegram Well Art.</strong> Цена и размер указаны по публикации салона. Наличие и итоговую стоимость уточняйте перед заказом. <a href={product.sourceUrl} target="_blank" rel="noreferrer">Открыть публикацию ↗</a></div>
+        ) : (
+          <div class="preview-disclaimer"><strong>Демонстрационная карточка.</strong> Размеры, материалы, отделки и варианты будут добавлены после передачи данных владельцем.</div>
+        )}
         <div class="product-actions">
-          <a class="button" href={whatsapp} target="_blank" rel="noreferrer">Узнать цену в WhatsApp</a>
+          <a class="button" href={whatsapp} target="_blank" rel="noreferrer">{product.price ? 'Уточнить наличие в WhatsApp' : 'Узнать цену в WhatsApp'}</a>
           <a class="button button--outline" href={contacts.phoneLink}>Позвонить</a>
         </div>
         <a class="showroom-link" href="/contacts"><span>Посмотреть в шоуруме</span>{contacts.address} ↗</a>
@@ -38,7 +43,7 @@ const whatsapp = whatsappProductUrl(product.name, product.sku, new URL(Astro.url
     </div>
     {related.length > 0 && <section class="related"><header><p class="eyebrow">В той же категории</p><h2>Можно сопоставить</h2></header><div class="product-grid">{related.map((item) => <ProductCard product={item} />)}</div></section>}
   </div>
-  <div class="mobile-product-cta"><a class="button" href={whatsapp} target="_blank" rel="noreferrer">Узнать цену</a></div>
+  <div class="mobile-product-cta"><a class="button" href={whatsapp} target="_blank" rel="noreferrer">{product.price ? 'Уточнить наличие' : 'Узнать цену'}</a></div>
   <dialog class="lightbox" data-lightbox>
     <button class="lightbox-close" type="button" aria-label="Закрыть фотографию" data-close-lightbox>×</button>
     <img src={product.images[0]} alt={product.name} width="1600" height="1800" data-lightbox-image />
@@ -89,8 +94,11 @@ const whatsapp = whatsappProductUrl(product.name, product.sku, new URL(Astro.url
   .product-info h1 { margin-bottom: 30px; font-size: clamp(2.6rem, 4.7vw, 5.1rem); }
   .product-state { display: flex; justify-content: space-between; gap: 20px; padding-block: 18px; border-block: 1px solid var(--taupe); font-size: .86rem; }
   .product-description { max-width: 46ch; margin: 36px 0 24px; font-size: 1.08rem; }
+  .product-dimensions { display: grid; grid-template-columns: 100px 1fr; gap: 18px; margin: 0 0 24px; font-size: .9rem; }
+  .product-dimensions span { color: var(--muted); }
   .preview-disclaimer { max-width: 52ch; padding: 18px; border: 1px solid var(--taupe); border-radius: 8px; color: var(--muted); font-size: .82rem; }
   .preview-disclaimer strong { display: block; color: var(--ink); }
+  .preview-disclaimer a { display: inline-block; margin-top: 8px; color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
   .product-actions { display: grid; gap: 10px; margin-top: 32px; }
   .showroom-link { display: grid; gap: 3px; margin-top: 28px; color: var(--muted); font-size: .8rem; }
   .showroom-link span { color: var(--ink); font-size: .9rem; font-weight: 600; }

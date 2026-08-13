@@ -1,5 +1,6 @@
 ---
 import { contacts } from '@/utils/links';
+import SocialLinks from '@/components/SocialLinks.astro';
 const year = new Date().getFullYear();
 ---
 <footer class="site-footer">
@@ -26,9 +27,7 @@ const year = new Date().getFullYear();
     <div class="footer-column">
       <p class="footer-label">Связаться</p>
       <a href={contacts.phoneLink}>{contacts.phoneDisplay}</a>
-      <a href={contacts.whatsapp} target="_blank" rel="noreferrer">WhatsApp ↗</a>
-      <a href={contacts.telegram} target="_blank" rel="noreferrer">Telegram ↗</a>
-      <a href={contacts.instagram} target="_blank" rel="noreferrer">Instagram ↗</a>
+      <SocialLinks className="footer-socials" label="Связаться с Well Art" />
     </div>
   </div>
   <div class="footer-bottom">

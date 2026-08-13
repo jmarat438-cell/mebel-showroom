@@ -1,5 +1,6 @@
 ---
 import { contacts } from '@/utils/links';
+import SocialLinks from '@/components/SocialLinks.astro';
 interface Props { overlay?: boolean }
 const { overlay = false } = Astro.props;
 ---
@@ -21,7 +22,7 @@ const { overlay = false } = Astro.props;
     <a href="/contacts">Контакты</a>
   </nav>
   <div class="header-actions">
-    <a class="header-wa" href={contacts.whatsapp} target="_blank" rel="noreferrer">WhatsApp</a>
+    <SocialLinks className="header-socials" />
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Открыть меню">
       <span></span><span></span>
     </button>
@@ -35,7 +36,7 @@ const { overlay = false } = Astro.props;
     </nav>
     <div class="mobile-contacts">
       <a href={contacts.phoneLink}>{contacts.phoneDisplay}</a>
-      <a href={contacts.whatsapp} target="_blank" rel="noreferrer">Написать в WhatsApp ↗</a>
+      <SocialLinks className="mobile-socials" label="Связаться с Well Art" />
     </div>
   </div>
 </header>
@@ -53,10 +54,6 @@ const { overlay = false } = Astro.props;
     let lockedScrollY = 0;
     const focusableSelector = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
     const isOpen = () => button.getAttribute('aria-expanded') === 'true';
-
-    const setScrolled = () => header.classList.toggle('is-scrolled', window.scrollY > 24);
-    setScrolled();
-    window.addEventListener('scroll', setScrolled, { passive: true });
 
     const unlockPage = () => {
       document.body.classList.remove('menu-open');

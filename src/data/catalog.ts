@@ -1,4 +1,4 @@
-export type ProductStatus = 'in-stock' | 'made-to-order';
+export type ProductStatus = 'in-stock' | 'made-to-order' | 'on-request';
 
 export type Category = {
   slug: string;
@@ -18,6 +18,9 @@ export type Product = {
   description: string;
   images: string[];
   featured?: boolean;
+  price?: number;
+  dimensions?: string;
+  sourceUrl?: string;
 };
 
 const img = (id: string, width = 1400) =>
@@ -75,6 +78,27 @@ export const categories: Category[] = [
 ];
 
 export const products: Product[] = [
+  {
+    slug: 'stolik-capella', name: 'Журнальный стол Capella', sku: 'TG-387', category: 'living-room',
+    status: 'on-request', featured: true, price: 90000, dimensions: '98 × 70 × 39 см',
+    description: 'Керамическая столешница с рисунком под мрамор, изогнутые ножки из тёмного дерева и металлическое основание.',
+    images: ['/products/telegram/capella.jpg'],
+    sourceUrl: 'https://t.me/wellart_m/387',
+  },
+  {
+    slug: 'vitrina-willa', name: 'Витрина Willa', sku: 'TG-392', category: 'storage',
+    status: 'on-request', featured: true, price: 99000, dimensions: '69 × 44 × 162 см',
+    description: 'Современная дизайнерская витрина в минималистичном стиле для посуды, декора и коллекционных предметов.',
+    images: ['/products/telegram/willa.jpg'],
+    sourceUrl: 'https://t.me/wellart_m/392',
+  },
+  {
+    slug: 'bufet-soho', name: 'Буфет Soho', sku: 'TG-403', category: 'storage',
+    status: 'on-request', featured: true, price: 225000, dimensions: '209 × 48 × 75 см',
+    description: 'Лаконичный буфет, построенный на балансе формы, фактуры и свободного пространства.',
+    images: ['/products/telegram/soho.jpg'],
+    sourceUrl: 'https://t.me/wellart_m/403',
+  },
   {
     slug: 'divan-lento', name: 'Диван «Ленто»', sku: 'WA-101', category: 'sofas-armchairs',
     status: 'in-stock', featured: true,
@@ -152,4 +176,12 @@ export const products: Product[] = [
 export const categoryBySlug = (slug: string) => categories.find((item) => item.slug === slug);
 export const productBySlug = (slug: string) => products.find((item) => item.slug === slug);
 export const productsInCategory = (slug: string) => products.filter((item) => item.category === slug);
-export const statusLabel = (status: ProductStatus) => status === 'in-stock' ? 'В наличии' : 'Под заказ';
+export const statusLabel = (status: ProductStatus) => {
+  if (status === 'in-stock') return 'В наличии';
+  if (status === 'made-to-order') return 'Под заказ';
+  return 'Наличие уточняется';
+};
+
+export const formatPrice = (price?: number) => price
+  ? `${new Intl.NumberFormat('ru-RU').format(price)} ₽`
+  : 'Цена по запросу';

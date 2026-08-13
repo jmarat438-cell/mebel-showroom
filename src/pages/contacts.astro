@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import SocialLinks from '@/components/SocialLinks.astro';
 import { contacts } from '@/utils/links';
 ---
 <BaseLayout title="Контакты | Well Art" description="Адрес, телефон, WhatsApp, Telegram и маршрут в мебельный салон Well Art в Махачкале.">
@@ -21,9 +22,9 @@ import { contacts } from '@/utils/links';
       </div>
       <div class="contact-lines">
         <div><span>Телефон</span><a href={contacts.phoneLink}>{contacts.phoneDisplay}</a></div>
-        <div><span>Мессенджеры</span><p><a href={contacts.whatsapp} target="_blank" rel="noreferrer">WhatsApp ↗</a><a href={contacts.telegram} target="_blank" rel="noreferrer">Telegram ↗</a></p></div>
+        <div><span>Написать</span><SocialLinks label="Написать Well Art" /></div>
         <div><span>Время</span><p>{contacts.hours}</p></div>
-        <div><span>Соцсети</span><p><a href={contacts.instagram} target="_blank" rel="noreferrer">Instagram ↗</a><a href={contacts.taplink} target="_blank" rel="noreferrer">Все ссылки ↗</a></p></div>
+        <div><span>Все ссылки</span><p><a href={contacts.taplink} target="_blank" rel="noreferrer">Открыть Taplink ↗</a></p></div>
       </div>
     </div>
   </section>
