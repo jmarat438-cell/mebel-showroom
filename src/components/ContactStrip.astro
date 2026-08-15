@@ -7,11 +7,11 @@ import { contacts } from '@/utils/links';
     <h2 id="visit-heading">Лучше один раз<br />увидеть вживую</h2>
     <p>{contacts.address} {contacts.floor}.</p>
     <div class="button-row">
-      <a class="button button--light" href={contacts.route} target="_blank" rel="noreferrer">Построить маршрут ↗</a>
+      <a class="button button--light" href={contacts.route} target="_blank" rel="noopener noreferrer">Построить маршрут ↗</a>
       <a class="text-link text-link--light" href={contacts.phoneLink}>Позвонить</a>
     </div>
   </div>
   <div class="contact-strip__image">
-    <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1400&q=84" alt="Просторная гостиная с мягкой мебелью и тёплым светом" width="1200" height="900" loading="lazy" />
+    <picture><source type="image/avif" srcset="/media/wellart/contact-strip.avif" /><img src="/media/wellart/contact-strip.jpg" alt="Интерьерная экспозиция шоурума Well Art" width="1400" height="933" loading="lazy" /></picture>
   </div>
 </section>

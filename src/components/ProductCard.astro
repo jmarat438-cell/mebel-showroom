@@ -17,5 +17,8 @@ const category = categoryBySlug(product.category);
     </div>
     <span class:list={['status', product.status === 'in-stock' && 'status--stock']}>{statusLabel(product.status)}</span>
   </div>
-  <p class:list={['price', product.price && 'price--known']}>{formatPrice(product.price)}</p>
+  <p class:list={['price', product.price && 'price--known']}>
+    {product.oldPrice && <s>{formatPrice(product.oldPrice)}</s>}
+    <span>{formatPrice(product.price)}</span>
+  </p>
 </article>

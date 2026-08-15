@@ -104,7 +104,7 @@ h3 { line-height: 1.25; }
 .contact-strip__content { display: flex; padding: clamp(56px, 7vw, 112px); flex-direction: column; align-items: flex-start; justify-content: center; }
 .contact-strip__content h2 { margin-bottom: 26px; }
 .contact-strip__content > p:not(.eyebrow) { max-width: 36ch; margin-bottom: 42px; color: color-mix(in oklch, var(--paper), transparent 27%); }
-.contact-strip__image, .contact-strip__image img { width: 100%; height: 100%; }
+.contact-strip__image, .contact-strip__image picture, .contact-strip__image img { display: block; width: 100%; height: 100%; }
 .contact-strip__image img { object-fit: cover; }
 
 /* Product cards */
@@ -124,6 +124,7 @@ h3 { line-height: 1.25; }
 .status--stock::before { background: currentColor; }
 .price { margin: 8px 0 0; color: var(--muted); font-size: .88rem; }
 .price--known { color: var(--ink); font-weight: 600; }
+.price s { margin-right: 8px; color: var(--muted); font-weight: 400; }
 
 /* Internal pages */
 .page-hero { padding: clamp(72px, 9vw, 132px) 0 clamp(56px, 7vw, 104px); }

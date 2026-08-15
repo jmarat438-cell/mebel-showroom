@@ -12,19 +12,19 @@ import { contacts } from '@/utils/links';
     </header>
   </div>
   <section class="contact-grid">
-    <div class="contact-photo"><img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1500&q=86" alt="Интерьер гостиной с тёплым светом" width="1400" height="1200" /></div>
+    <div class="contact-photo"><picture><source type="image/avif" srcset="/media/wellart/contact.avif" /><img src="/media/wellart/contact.jpg" alt="Мягкая группа в шоуруме Well Art" width="1200" height="1800" /></picture></div>
     <div class="contact-details">
       <div class="contact-block">
         <p class="eyebrow">Адрес</p>
         <h2>{contacts.address}</h2>
         <p>{contacts.floor}</p>
-        <a class="button" href={contacts.route} target="_blank" rel="noreferrer">Открыть маршрут в 2ГИС ↗</a>
+        <a class="button" href={contacts.route} target="_blank" rel="noopener noreferrer">Открыть маршрут в 2ГИС ↗</a>
       </div>
       <div class="contact-lines">
         <div><span>Телефон</span><a href={contacts.phoneLink}>{contacts.phoneDisplay}</a></div>
         <div><span>Написать</span><SocialLinks label="Написать Well Art" /></div>
         <div><span>Время</span><p>{contacts.hours}</p></div>
-        <div><span>Все ссылки</span><p><a href={contacts.taplink} target="_blank" rel="noreferrer">Открыть Taplink ↗</a></p></div>
+        <div><span>Все ссылки</span><p><a href={contacts.taplink} target="_blank" rel="noopener noreferrer">Открыть Taplink ↗</a></p></div>
       </div>
     </div>
   </section>
@@ -34,7 +34,8 @@ import { contacts } from '@/utils/links';
   .contact-hero { max-width: 1000px; }
   .contact-grid { display: grid; grid-template-columns: 1.08fr .92fr; background: var(--paper); }
   .contact-photo { min-height: 900px; }
-  .contact-photo img { width: 100%; height: 100%; object-fit: cover; }
+  .contact-photo picture, .contact-photo img { display: block; width: 100%; height: 100%; }
+  .contact-photo img { object-fit: cover; }
   .contact-details { display: flex; padding: clamp(56px, 7vw, 110px); flex-direction: column; justify-content: space-between; }
   .contact-block h2 { max-width: 560px; margin-bottom: 14px; font-size: clamp(2.3rem, 3.8vw, 4.2rem); }
   .contact-block > p:not(.eyebrow) { color: var(--muted); }

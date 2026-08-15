@@ -10,9 +10,51 @@ export function getStaticPaths() {
 const { product } = Astro.props;
 const category = categoryBySlug(product.category)!;
 const related = productsInCategory(product.category).filter((item) => item.slug !== product.slug).slice(0, 3);
-const whatsapp = whatsappProductUrl(product.name, product.sku, new URL(Astro.url.pathname, Astro.site));
+const productUrl = new URL(Astro.url.pathname, Astro.site);
+const whatsapp = whatsappProductUrl(product.name, product.sku, productUrl);
+const productSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  '@id': `${productUrl.toString()}#product`,
+  name: product.name,
+  description: product.description,
+  sku: product.sku,
+  category: category.name,
+  image: product.images.map((image) => new URL(image, Astro.site).toString()),
+  ...(product.price ? {
+    offers: {
+      '@type': 'Offer',
+      url: productUrl.toString(),
+      priceCurrency: 'RUB',
+      price: product.price,
+      itemCondition: 'https://schema.org/NewCondition',
+      availability: product.status === 'in-stock'
+        ? 'https://schema.org/InStock'
+        : product.status === 'made-to-order'
+          ? 'https://schema.org/PreOrder'
+          : 'https://schema.org/LimitedAvailability',
+      seller: { '@id': new URL('/#store', Astro.site).toString() },
+    },
+  } : {}),
+};
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Главная', item: new URL('/', Astro.site).toString() },
+    { '@type': 'ListItem', position: 2, name: 'Каталог', item: new URL('/catalog', Astro.site).toString() },
+    { '@type': 'ListItem', position: 3, name: category.name, item: new URL(`/catalog/${category.slug}`, Astro.site).toString() },
+    { '@type': 'ListItem', position: 4, name: product.name, item: productUrl.toString() },
+  ],
+};
 ---
-<BaseLayout title={`${product.name} | Well Art`} description={`${product.description} ${formatPrice(product.price)}.`} image={product.images[0]}>
+<BaseLayout
+  title={`${product.name} | Well Art`}
+  description={`${product.description} ${formatPrice(product.price)}.`}
+  image={product.images[0]}
+  imageAlt={`${product.name} в салоне Well Art`}
+  structuredData={[productSchema, breadcrumbSchema]}
+>
   <div class="container product-page">
     <nav class="breadcrumbs" aria-label="Хлебные крошки"><a href="/">Главная</a><span>/</span><a href="/catalog">Каталог</a><span>/</span><a href={`/catalog/${category.slug}`}>{category.shortName}</a><span>/</span><span aria-current="page">{product.name}</span></nav>
     <div class:list={['product-layout', product.sourceUrl && 'product-layout--telegram']}>
@@ -26,24 +68,20 @@ const whatsapp = whatsappProductUrl(product.name, product.sku, new URL(Astro.url
       <article class="product-info">
         <p class="eyebrow">{category.shortName} · {product.sku}</p>
         <h1>{product.name}</h1>
-        <div class="product-state"><span class:list={['status', product.status === 'in-stock' && 'status--stock']}>{statusLabel(product.status)}</span><span>{formatPrice(product.price)}</span></div>
+        <div class="product-state"><span class:list={['status', product.status === 'in-stock' && 'status--stock']}>{statusLabel(product.status)}</span><span class="product-price">{product.oldPrice && <s>{formatPrice(product.oldPrice)}</s>}{formatPrice(product.price)}</span></div>
         <p class="product-description">{product.description}</p>
         {product.dimensions && <p class="product-dimensions"><span>Размер</span>{product.dimensions}</p>}
-        {product.sourceUrl ? (
-          <div class="preview-disclaimer"><strong>Данные из Telegram Well Art.</strong> Цена и размер указаны по публикации салона. Наличие и итоговую стоимость уточняйте перед заказом. <a href={product.sourceUrl} target="_blank" rel="noreferrer">Открыть публикацию ↗</a></div>
-        ) : (
-          <div class="preview-disclaimer"><strong>Демонстрационная карточка.</strong> Размеры, материалы, отделки и варианты будут добавлены после передачи данных владельцем.</div>
-        )}
+        {product.sourceUrl && <div class="preview-disclaimer"><strong>Данные из публикации Well Art.</strong> Характеристики на странице основаны на публикации салона. Актуальные цену, размеры и наличие уточняйте перед заказом. <a href={product.sourceUrl} target="_blank" rel="noopener noreferrer">Открыть публикацию ↗</a></div>}
         <div class="product-actions">
-          <a class="button" href={whatsapp} target="_blank" rel="noreferrer">{product.price ? 'Уточнить наличие в WhatsApp' : 'Узнать цену в WhatsApp'}</a>
+          <a class="button" href={whatsapp} target="_blank" rel="noopener noreferrer">{product.price ? 'Уточнить наличие в WhatsApp' : 'Узнать цену в WhatsApp'}</a>
           <a class="button button--outline" href={contacts.phoneLink}>Позвонить</a>
         </div>
-        <a class="showroom-link" href="/contacts"><span>Посмотреть в шоуруме</span>{contacts.address} ↗</a>
+        <a class="showroom-link" href={contacts.route} target="_blank" rel="noopener noreferrer"><span>Построить маршрут в 2ГИС</span>{contacts.address} ↗</a>
       </article>
     </div>
     {related.length > 0 && <section class="related"><header><p class="eyebrow">В той же категории</p><h2>Можно сопоставить</h2></header><div class="product-grid">{related.map((item) => <ProductCard product={item} />)}</div></section>}
   </div>
-  <div class="mobile-product-cta"><a class="button" href={whatsapp} target="_blank" rel="noreferrer">{product.price ? 'Уточнить наличие' : 'Узнать цену'}</a></div>
+  <div class="mobile-product-cta"><a class="button" href={whatsapp} target="_blank" rel="noopener noreferrer">{product.price ? 'Уточнить наличие' : 'Узнать цену'}</a></div>
   <dialog class="lightbox" data-lightbox>
     <button class="lightbox-close" type="button" aria-label="Закрыть фотографию" data-close-lightbox>×</button>
     <img src={product.images[0]} alt={product.name} width="1600" height="1800" data-lightbox-image />
@@ -96,6 +134,8 @@ const whatsapp = whatsappProductUrl(product.name, product.sku, new URL(Astro.url
   .product-info { position: sticky; top: 120px; padding-top: clamp(14px, 4vw, 72px); }
   .product-info h1 { margin-bottom: 30px; font-size: clamp(2.6rem, 4.7vw, 5.1rem); }
   .product-state { display: flex; justify-content: space-between; gap: 20px; padding-block: 18px; border-block: 1px solid var(--taupe); font-size: .86rem; }
+  .product-price { display: flex; gap: 9px; align-items: baseline; }
+  .product-price s { color: var(--muted); font-size: .78rem; }
   .product-description { max-width: 46ch; margin: 36px 0 24px; font-size: 1.08rem; }
   .product-dimensions { display: grid; grid-template-columns: 100px 1fr; gap: 18px; margin: 0 0 24px; font-size: .9rem; }
   .product-dimensions span { color: var(--muted); }

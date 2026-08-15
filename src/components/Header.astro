@@ -20,6 +20,7 @@ const { overlay = false } = Astro.props;
     <a href="/#about">О салоне</a>
     <a href="/#delivery">Доставка</a>
     <a href="/contacts">Контакты</a>
+    <a href={contacts.route} target="_blank" rel="noopener noreferrer">Маршрут ↗</a>
   </nav>
   <div class="header-actions">
     <SocialLinks className="header-socials" />
@@ -33,6 +34,7 @@ const { overlay = false } = Astro.props;
       <a href="/#about">О салоне</a>
       <a href="/#delivery">Доставка</a>
       <a href="/contacts">Контакты</a>
+      <a href={contacts.route} target="_blank" rel="noopener noreferrer">Маршрут в 2ГИС ↗</a>
     </nav>
     <div class="mobile-contacts">
       <a href={contacts.phoneLink}>{contacts.phoneDisplay}</a>

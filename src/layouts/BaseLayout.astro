@@ -1,22 +1,58 @@
 ---
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
+import { contacts } from '@/utils/links';
 import '@/styles/global.css';
 
 interface Props {
   title: string;
   description: string;
   image?: string;
+  imageAlt?: string;
   darkHeader?: boolean;
+  structuredData?: Record<string, unknown> | Record<string, unknown>[];
 }
 
 const {
   title,
   description,
-  image = 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1600&q=84',
+  image = '/media/wellart/og-default.jpg',
+  imageAlt = 'Интерьер мебельного салона Well Art в Махачкале',
   darkHeader = false,
+  structuredData,
 } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
+const socialImage = new URL(image, Astro.site);
+const isDefaultSocialImage = image === '/media/wellart/og-default.jpg';
+const localBusinessSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FurnitureStore',
+  '@id': new URL('/#store', Astro.site).toString(),
+  name: contacts.name,
+  description: 'Мебельный салон Well Art: пять этажей современной мебели, интерьерных решений и декора в Махачкале.',
+  url: new URL('/', Astro.site).toString(),
+  image: new URL('/media/wellart/og-default.jpg', Astro.site).toString(),
+  logo: new URL('/brand/wellart-logo.png', Astro.site).toString(),
+  telephone: contacts.phoneDisplay,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'улица Гагарина, 32/1 стр.',
+    addressLocality: 'Махачкала',
+    addressRegion: 'Республика Дагестан',
+    addressCountry: 'RU',
+  },
+  openingHoursSpecification: [{
+    '@type': 'OpeningHoursSpecification',
+    dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+    opens: '10:00',
+    closes: '19:00',
+  }],
+  sameAs: [contacts.instagram, contacts.telegram],
+};
+const pageSchemas = structuredData
+  ? (Array.isArray(structuredData) ? structuredData : [structuredData])
+  : [];
+const schemas = [localBusinessSchema, ...pageSchemas];
 ---
 <!doctype html>
 <html lang="ru">
@@ -25,14 +61,27 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta name="viewport" content="width=device-width" />
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    <link rel="icon" type="image/png" href="/brand/wellart-logo.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
     <meta name="theme-color" content="#211a17" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="ru_RU" />
+    <meta property="og:site_name" content="Well Art" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
-    <meta property="og:image" content={image} />
+    <meta property="og:image" content={socialImage} />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:alt" content={imageAlt} />
+    {isDefaultSocialImage && <meta property="og:image:width" content="1200" />}
+    {isDefaultSocialImage && <meta property="og:image:height" content="800" />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={socialImage} />
+    <meta name="twitter:image:alt" content={imageAlt} />
+    {schemas.map((schema) => <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />)}
     <title>{title}</title>
   </head>
   <body class:list={[darkHeader && 'has-overlay-header']}>

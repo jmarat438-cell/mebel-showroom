@@ -6,3 +6,5 @@ dist/
 # Local previews and presentation exports are not required for deployment.
 work/logo-removed-check.png
 outputs/
+tmp/pdfs/rendered-wellart/
+tmp/pdfs/screens-wellart/
